@@ -19,3 +19,13 @@ final appwriteAccountProvider = Provider<Account>((ref) {
   final client = ref.watch(appwriteAccountClientProvider);
   return Account(client);
 });
+
+final appwriteStorageProvider = Provider<Storage>((ref) {
+  final client = ref.watch(appwriteAccountClientProvider);
+  return Storage(client);
+});
+
+final appwriteRealtimeProvider = Provider<Realtime>((ref) {
+  final client = ref.watch(appwriteAccountClientProvider);
+  return Realtime(client);
+});

@@ -37,11 +37,15 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_riverpod: ^2.4.10
   http: ^1.2.1
-  appwrite: ^12.0.0-rc.4
+  appwrite: ^12.0.1
   package_rename: ^1.5.3
   flutter_svg: ^2.0.10+1
   fpdart: ^1.1.0
-  image_picker: ^1.0.7
+  image_picker: ^1.1.0
+  flutter_carousel_widget: ^2.2.0
+  timeago: ^3.6.1
+  any_link_preview: ^3.0.1
+  like_button: ^2.0.5
 
 dev_dependencies:
   flutter_test:

@@ -2,10 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/common/common.dart';
-import 'package:twitter_clone/common/rounded_small_button.dart';
 import 'package:twitter_clone/constants/constants.dart';
 import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
-import 'package:twitter_clone/features/auth/view/signup_screen.dart';
 import 'package:twitter_clone/features/auth/widgets/widgets.dart';
 import 'package:twitter_clone/theme/theme.dart';
 
@@ -68,8 +66,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             hintText: "Email address"),
                         const SizedBox(height: 25),
                         AuthField(
-                            controller: passwordController,
-                            hintText: "Password"),
+                          controller: passwordController,
+                          hintText: "Password",
+                        ),
                         const SizedBox(height: 40),
                         Align(
                           alignment: Alignment.topRight,

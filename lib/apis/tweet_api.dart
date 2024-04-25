@@ -10,16 +10,24 @@ import 'package:twitter_clone/model/tweet_model.dart';
 
 final tweetAPIProvider = Provider<TweetApi>((ref) {
   final databases = ref.watch(appwriteDatabasesProvider);
-  return TweetApi(db: databases);
+  final realtime = ref.watch(appwriteRealtimeProvider);
+  return TweetApi(db: databases, realtime: realtime);
 });
 
 abstract class ITweetAPI {
   FutureEither<Document> shareTweet(Tweet tweet);
+  Future<List<Document>> getTweets();
+  Stream<RealtimeMessage> getLatestTweet();
+  FutureEither<Document> likeTweet(Tweet tweet);
+  FutureEither<Document> updateReshareCount(Tweet tweet);
 }
 
 class TweetApi implements ITweetAPI {
   final Databases _db;
-  TweetApi({required Databases db}) : _db = db;
+  final Realtime _realtime;
+  TweetApi({required Databases db, required Realtime realtime})
+      : _db = db,
+        _realtime = realtime;
 
   @override
   FutureEither<Document> shareTweet(Tweet tweet) async {
@@ -29,6 +37,55 @@ class TweetApi implements ITweetAPI {
           collectionId: AppwriteConstant.tweetCollection,
           documentId: tweet.id,
           data: tweet.toMap());
+      return right(document);
+    } on AppwriteException catch (e, stk) {
+      return left(Failure(e.message ?? "some UnExpected Error occured", stk));
+    } catch (e, stk) {
+      return left(Failure(e.toString(), stk));
+    }
+  }
+
+  @override
+  Future<List<Document>> getTweets() async {
+    final document = await _db.listDocuments(
+        databaseId: AppwriteConstant.databaseId,
+        collectionId: AppwriteConstant.tweetCollection,
+        queries: []);
+    return document.documents;
+  }
+
+  @override
+  Stream<RealtimeMessage> getLatestTweet() {
+    return _realtime.subscribe([
+      'databases.${AppwriteConstant.databaseId}.collections.${AppwriteConstant.tweetCollection}.documents'
+    ]).stream;
+  }
+
+  @override
+  FutureEither<Document> likeTweet(Tweet tweet) async {
+    try {
+      final document = await _db.updateDocument(
+        databaseId: AppwriteConstant.databaseId,
+        collectionId: AppwriteConstant.tweetCollection,
+        documentId: tweet.id,
+        data: tweet.likeMap(),
+      );
+      return right(document);
+    } on AppwriteException catch (e, stk) {
+      return left(Failure(e.message ?? "some UnExpected Error occured", stk));
+    } catch (e, stk) {
+      return left(Failure(e.toString(), stk));
+    }
+  }
+
+  @override
+  FutureEither<Document> updateReshareCount(Tweet tweet) async {
+    try {
+      final document = await _db.updateDocument(
+          databaseId: AppwriteConstant.databaseId,
+          collectionId: AppwriteConstant.tweetCollection,
+          documentId: tweet.id,
+          data: tweet.reshareMap());
       return right(document);
     } on AppwriteException catch (e, stk) {
       return left(Failure(e.message ?? "some UnExpected Error occured", stk));

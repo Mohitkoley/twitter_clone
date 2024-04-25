@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/common/common.dart';
@@ -8,6 +9,7 @@ import 'package:twitter_clone/constants/assets_constants.dart';
 import 'package:twitter_clone/core/extension.dart';
 import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
 import 'package:twitter_clone/features/tweet/controllers/image_picker_controller.dart';
+import 'package:twitter_clone/features/tweet/controllers/tweet_controller.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 
 class CreateTweetViewScreen extends ConsumerStatefulWidget {
@@ -40,9 +42,19 @@ class _CreateTweetViewScreenState extends ConsumerState<CreateTweetViewScreen> {
     }
   }
 
+  void shareTweet() {
+    final description = descriptionController.text;
+    ref
+        .read(tweetControllerProvider.notifier)
+        .shareTweet(images, description, context);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDetailsProvider).value;
+    final isLoading = ref.watch(tweetControllerProvider);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -57,14 +69,14 @@ class _CreateTweetViewScreenState extends ConsumerState<CreateTweetViewScreen> {
         actions: [
           RoundedSmallButton(
             label: "Tweet",
-            onPressed: () {},
+            onPressed: shareTweet,
             backgroundColor: Pallete.blueColor,
             textColor: Pallete.whiteColor,
           )
         ],
       ),
       body: SafeArea(
-          child: currentUser == null
+          child: isLoading || currentUser == null
               ? const Loader()
               : SingleChildScrollView(
                   child: Column(
@@ -93,16 +105,31 @@ class _CreateTweetViewScreenState extends ConsumerState<CreateTweetViewScreen> {
                             maxLines: null,
                           ))
                         ],
-                      )
+                      ),
                       //Todo: add craousal for images
+                      if (images.isNotEmpty)
+                        FlutterCarousel(
+                          items: images
+                              .map((file) => Container(
+                                    width: context.width,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                    child: Image.file(file),
+                                  ))
+                              .toList(),
+                          options: CarouselOptions(
+                            height: 400,
+                            enableInfiniteScroll: false,
+                          ),
+                        )
                     ],
                   ),
                 )),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          border: const Border(
-              top: BorderSide(color: Pallete.greyColor, width: 0.3)),
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: Pallete.greyColor, width: 0.3)),
         ),
         child: Row(
           children: [
