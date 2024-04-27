@@ -31,16 +31,32 @@ class TweetList extends ConsumerWidget {
                   Tweet tweet =
                       tweets.firstWhere((element) => element.id == tweetId);
                   int index = tweets.indexOf(tweet);
-                  tweets[index] = tweet.copyWith(
-                      reshareCount: data.payload['reshareCount']);
+                  tweets.removeWhere((element) => element.id == tweetId);
+                  tweet = Tweet.fromMap(data.payload);
+                  tweets.insert(index, tweet);
+                  // tweets[index] = tweet.copyWith(
+                  //     reshareCount: data.payload['reshareCount']);
                 }
 
-                return ListView.builder(
-                    itemCount: tweets.length,
-                    itemBuilder: (context, index) {
-                      Tweet tweet = tweets[index];
-                      return TweetCard(tweet: tweet);
-                    });
+                if (tweets.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No Tweets",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                      itemCount: tweets.length,
+                      itemBuilder: (context, index) {
+                        Tweet tweet = tweets[index];
+                        return TweetCard(tweet: tweet);
+                      });
+                }
               },
               error: (error, stackTrace) => ErrorScreen(
                     message: error.toString(),

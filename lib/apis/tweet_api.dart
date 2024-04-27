@@ -20,6 +20,8 @@ abstract class ITweetAPI {
   Stream<RealtimeMessage> getLatestTweet();
   FutureEither<Document> likeTweet(Tweet tweet);
   FutureEither<Document> updateReshareCount(Tweet tweet);
+  Future<List<Document>> getRepliesToTweet(Tweet tweet);
+  Future<Document> getTweetById(String id);
 }
 
 class TweetApi implements ITweetAPI {
@@ -50,7 +52,9 @@ class TweetApi implements ITweetAPI {
     final document = await _db.listDocuments(
         databaseId: AppwriteConstant.databaseId,
         collectionId: AppwriteConstant.tweetCollection,
-        queries: []);
+        queries: [
+          // Query.orderDesc('tweetedAt'),
+        ]);
     return document.documents;
   }
 
@@ -92,5 +96,28 @@ class TweetApi implements ITweetAPI {
     } catch (e, stk) {
       return left(Failure(e.toString(), stk));
     }
+  }
+
+  @override
+  Future<List<Document>> getRepliesToTweet(Tweet tweet) async {
+    try {
+      final document = await _db.listDocuments(
+          databaseId: AppwriteConstant.databaseId,
+          collectionId: AppwriteConstant.tweetCollection,
+          queries: [Query.equal('repliedTo', tweet.id)]);
+      return document.documents;
+    } on AppwriteException catch (e, stk) {
+      throw Failure(e.message ?? "some UnExpected Error occured", stk);
+    } catch (e, stk) {
+      throw Failure(e.toString(), stk);
+    }
+  }
+
+  @override
+  Future<Document> getTweetById(String id) {
+    return _db.getDocument(
+        databaseId: AppwriteConstant.databaseId,
+        collectionId: AppwriteConstant.tweetCollection,
+        documentId: id);
   }
 }

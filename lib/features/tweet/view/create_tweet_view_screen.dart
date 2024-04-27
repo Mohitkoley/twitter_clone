@@ -46,7 +46,7 @@ class _CreateTweetViewScreenState extends ConsumerState<CreateTweetViewScreen> {
     final description = descriptionController.text;
     ref
         .read(tweetControllerProvider.notifier)
-        .shareTweet(images, description, context);
+        .shareTweet(images, description, "", "", context);
     Navigator.of(context).pop();
   }
 

@@ -25,6 +25,18 @@ final getTweetsProvider = FutureProvider<List<Tweet>>((ref) async {
   return await tweetController.getTweets();
 });
 
+final getTweetByIdProvider =
+    FutureProvider.family<Tweet, String>((ref, id) async {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return await tweetController.getTweetById(id);
+});
+
+final getRepliesToTweetProvider =
+    FutureProvider.autoDispose.family<List<Tweet>, Tweet>((ref, tweet) async {
+  final tweetController = ref.watch(tweetControllerProvider.notifier);
+  return await tweetController.getRepliesToTweet(tweet);
+});
+
 final getLatestTweetProvider = StreamProvider.autoDispose((ref) {
   final tweetAPI = ref.watch(tweetAPIProvider);
   return tweetAPI.getLatestTweet();
@@ -50,21 +62,22 @@ class TweetController extends StateNotifier<bool> {
 
   final hashTagRegExp = RegExp(r"\B#\w*[a-zA-Z]+\w*");
 
-  void shareTweet(List<File> images, String description, BuildContext context) {
+  void shareTweet(List<File> images, String description, String repliedTo,
+      String repliedToUserId, BuildContext context) {
     state = true;
     if (images.isNotEmpty) {
-      _shareimage(images, description, context);
+      _shareimage(images, description, repliedTo, repliedToUserId, context);
     }
 
     if (description.isNotEmpty) {
-      _shareTextTweet(description, context);
+      _shareTextTweet(description, repliedTo, repliedToUserId, context);
     } else {
       context.showSnack("Please add description");
     }
   }
 
-  _shareimage(
-      List<File> images, String description, BuildContext context) async {
+  _shareimage(List<File> images, String description, String repliedTo,
+      String repliedToUserId, BuildContext context) async {
     final imageLinks = await _storage.uploadImage(images);
     state = true;
     final hashTags = _getHashTagFromText(description);
@@ -83,6 +96,8 @@ class TweetController extends StateNotifier<bool> {
       id: ID.unique(),
       reshareCount: 0,
       reTweetedBy: "",
+      repliedTo: repliedTo,
+      repliedToUserId: repliedToUserId,
     );
     state = false;
     final res = await _tweetApi.shareTweet(tweet);
@@ -91,7 +106,8 @@ class TweetController extends StateNotifier<bool> {
     });
   }
 
-  _shareTextTweet(String description, BuildContext context) async {
+  _shareTextTweet(String description, String repliedTo, String repliedToUserId,
+      BuildContext context) async {
     state = true;
     final hashTags = _getHashTagFromText(description);
     final link = _getLinkFromText(description);
@@ -109,7 +125,9 @@ class TweetController extends StateNotifier<bool> {
         commentIds: const [],
         id: ID.unique(),
         reshareCount: 0,
-        reTweetedBy: '');
+        reTweetedBy: '',
+        repliedTo: repliedTo,
+        repliedToUserId: repliedToUserId);
     state = false;
     final res = await _tweetApi.shareTweet(tweet);
     res.fold((l) => context.showSnack(l.message), (r) {
@@ -136,8 +154,13 @@ class TweetController extends StateNotifier<bool> {
         commentIds: [],
         reshareCount: tweet.reshareCount + 1,
         reTweetedBy: currentUser.uid);
-    _tweetApi.updateReshareCount(updatedTweet);
-    final res = await _tweetApi.likeTweet(updatedTweet);
+
+    final response = await Future.wait([
+      _tweetApi.updateReshareCount(updatedTweet),
+      _tweetApi.likeTweet(updatedTweet)
+    ]);
+
+    final res = response[1];
     res.fold((l) => context.showSnack(l.message), (r) async {
       final tweetUser = tweet.copyWith(
         id: ID.unique(),
@@ -154,6 +177,16 @@ class TweetController extends StateNotifier<bool> {
 
   Future<List<Tweet>> getTweets() async {
     final tweetList = await _tweetApi.getTweets();
+    return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  }
+
+  Future<Tweet> getTweetById(String id) async {
+    final tweet = await _tweetApi.getTweetById(id);
+    return Tweet.fromMap(tweet.data);
+  }
+
+  Future<List<Tweet>> getRepliesToTweet(Tweet tweet) async {
+    final tweetList = await _tweetApi.getRepliesToTweet(tweet);
     return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
   }
 
