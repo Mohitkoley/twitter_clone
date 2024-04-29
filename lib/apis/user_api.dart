@@ -11,6 +11,7 @@ abstract class IUserAPI {
   FutureEitherVoid saveUserData(UserModel userModel);
   Future<Document> getUserData(String userId);
   Future<List<Document>> searchUserByName(String name);
+  FutureEitherVoid updateUserData(UserModel userModel);
 }
 
 final userAPIProvider = Provider<UserAPI>((ref) {
@@ -55,5 +56,21 @@ class UserAPI implements IUserAPI {
           Query.search('name', name),
         ]);
     return documents.documents;
+  }
+
+  @override
+  FutureEitherVoid updateUserData(UserModel userModel) async {
+    try {
+      _db.updateDocument(
+          databaseId: AppwriteConstant.databaseId,
+          collectionId: AppwriteConstant.userCollection,
+          documentId: userModel.uid,
+          data: userModel.toMap());
+      return right(null);
+    } on AppwriteException catch (e, stk) {
+      return left(Failure(e.message ?? "some UnExpected Error occured", stk));
+    } catch (e, stk) {
+      return left(Failure(e.toString(), stk));
+    }
   }
 }

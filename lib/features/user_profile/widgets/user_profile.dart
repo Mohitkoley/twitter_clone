@@ -8,6 +8,7 @@ import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
 import 'package:twitter_clone/features/tweet/controllers/tweet_controller.dart';
 import 'package:twitter_clone/features/tweet/widgets/tweet_card.dart';
 import 'package:twitter_clone/features/user_profile/controllers/user_profile_controller.dart';
+import 'package:twitter_clone/features/user_profile/view/edit_profile_view.dart';
 import 'package:twitter_clone/features/user_profile/widgets/follow_count.dart';
 import 'package:twitter_clone/model/tweet_model.dart';
 import 'package:twitter_clone/model/user_model.dart';
@@ -36,13 +37,15 @@ class UserProfile extends ConsumerWidget {
                           child: user.bannerPic.isEmpty
                               ? const ColoredBox(color: Pallete.blueColor)
                               : Image.network(user.bannerPic,
-                                  fit: BoxFit.cover)),
+                                  fit: BoxFit.fitWidth)),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Positioned(
                           bottom: 0,
                           child: CircleAvatar(
-                            backgroundImage: NetworkImage(user.profilePic),
+                            backgroundImage: NetworkImage(
+                              user.profilePic,
+                            ),
                             radius: 20,
                           ),
                         ),
@@ -59,7 +62,12 @@ class UserProfile extends ConsumerWidget {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              currentUser.uid == user.uid
+                                  ? Navigator.push(
+                                      context, EditProfileView.route)
+                                  : null;
+                            },
                             child: Text(
                                 currentUser.uid == user.uid
                                     ? 'Edit Profile'

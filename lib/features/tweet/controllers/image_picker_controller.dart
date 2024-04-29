@@ -20,13 +20,14 @@ class ImagePickerNotifier extends StateNotifier<List<File>> {
     return state;
   }
 
-  Future<void> pickImage() async {
+  Future<File?> pickImage() async {
     final XFile? image =
         await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      state = [...state, File(image.path)];
+      return File(image.path);
     }
+    return null;
   }
 
   void removeImage(File image) {
