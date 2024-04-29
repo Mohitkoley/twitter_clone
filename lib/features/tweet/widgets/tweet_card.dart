@@ -114,7 +114,7 @@ class TweetCard extends ConsumerWidget {
                                               ]));
                                         },
                                         error: (err, stk) {
-                                          return Error(
+                                          return ErrorText(
                                             message: err.toString(),
                                           );
                                         },

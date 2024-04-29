@@ -29,7 +29,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final bottomBarIndex = ref.watch(bottomBarProvider);
     return Scaffold(
-      appBar: appBar,
+      appBar: bottomBarIndex == 0 ? appBar : null,
       body: IndexedStack(
         index: bottomBarIndex,
         children: UIConstants.bottomTabBarScreens,

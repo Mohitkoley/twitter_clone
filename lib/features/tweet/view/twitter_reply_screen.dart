@@ -80,7 +80,7 @@ class TwitterReplyScreen extends ConsumerWidget {
                                   return TweetCard(tweet: tweet);
                                 }));
                       },
-                      error: (error, stackTrace) => Error(
+                      error: (error, stackTrace) => ErrorText(
                             message: error.toString(),
                           ),
                       loading: () => Expanded(
@@ -92,7 +92,7 @@ class TwitterReplyScreen extends ConsumerWidget {
                                 return TweetCard(tweet: tweet);
                               })));
                 },
-                error: (error, stackTrace) => Error(
+                error: (error, stackTrace) => ErrorText(
                       message: error.toString(),
                     ),
                 loading: () => const Loader()),
