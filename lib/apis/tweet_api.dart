@@ -128,7 +128,9 @@ class TweetApi implements ITweetAPI {
     final documents = await _db.listDocuments(
         databaseId: AppwriteConstant.databaseId,
         collectionId: AppwriteConstant.tweetCollection,
-        queries: [Query.equal('uid', uid)]);
+        queries: [
+          //Query.equal('uid', uid)
+        ]);
     return documents.documents;
   }
 

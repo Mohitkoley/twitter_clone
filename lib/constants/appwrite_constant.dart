@@ -1,13 +1,27 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class AppwriteConstant {
-  static const String endpoint = 'http://127.0.0.1:8080/v1';
-  static const String projectId = '65de1d6f4e9108353385';
-  static const String databaseId = '65de26edd12df0816f0a';
-  static const String userCollection = '65df8b05d8fc420453c3';
-  static const String tweetCollection = "6609b25bbaa0bc7e444f";
-  static const String imagesBucket = '6612e82bdbea48e99f0d';
-  static const String notificationCollections = "66334b25bbd2dd547bdd";
+  DotEnv dotenv = DotEnv();
+  static String endpoint = '';
+  static String projectId = '';
+  static String databaseId = '';
+  static String userCollection = '';
+  static String tweetCollection = '';
+  static String imagesBucket = '';
+  static String notificationCollections = '';
 
   static String imageUrl(String imageId) {
     return "$endpoint/storage/buckets/$imagesBucket/files/$imageId/view?project=$projectId&mode=admin";
+  }
+
+  Future getConfigs() async {
+    await dotenv.load(fileName: ".env");
+    endpoint = dotenv.env["endpoint"]!;
+    projectId = dotenv.env["projectId"]!;
+    databaseId = dotenv.env["databaseId"]!;
+    userCollection = dotenv.env["userCollection"]!;
+    tweetCollection = dotenv.env["tweetCollection"]!;
+    imagesBucket = dotenv.env["imagesBucket"]!;
+    notificationCollections = dotenv.env["notificationCollections"]!;
   }
 }

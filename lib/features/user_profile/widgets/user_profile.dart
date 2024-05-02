@@ -40,16 +40,14 @@ class UserProfile extends ConsumerWidget {
                               ? const ColoredBox(color: Pallete.blueColor)
                               : Image.network(user.bannerPic,
                                   fit: BoxFit.fitWidth)),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Positioned(
-                          bottom: 0,
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              user.profilePic,
-                            ),
-                            radius: 20,
+                      Container(
+                        alignment: Alignment.bottomLeft,
+                        padding: const EdgeInsets.all(20),
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            user.profilePic,
                           ),
+                          radius: 40,
                         ),
                       ),
                       Container(
@@ -121,11 +119,11 @@ class UserProfile extends ConsumerWidget {
                         Row(
                           children: [
                             FollowCount(
-                                count: user.following.length - 1,
+                                count: user.following.length,
                                 text: "Following"),
                             15.wBox,
                             FollowCount(
-                                count: user.followers.length - 1,
+                                count: user.followers.length,
                                 text: "Followers"),
                           ],
                         ),

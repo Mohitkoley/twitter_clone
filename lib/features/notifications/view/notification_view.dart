@@ -16,7 +16,10 @@ class NotificationViewScreen extends ConsumerWidget {
     final currentUser = ref.watch(currentUserDetailsProvider).value;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const Text(
+          'Notifications',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
       body: currentUser == null

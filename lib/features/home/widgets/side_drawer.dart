@@ -55,6 +55,7 @@ class SideDrawer extends ConsumerWidget {
                         context: context,
                         bannerImage: null,
                         profileImage: null);
+                Navigator.pop(context);
               },
             ),
             ListTile(

@@ -102,6 +102,7 @@ class AuthController extends StateNotifier<bool> {
   void logout(BuildContext context) async {
     final res = await authAPI.logOut();
     res.fold((l) => null, (r) {
+      Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
           context, SignUpScreen.route, (route) => false);
     });

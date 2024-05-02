@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/common/common.dart';
+import 'package:twitter_clone/constants/appwrite_constant.dart';
 import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
-import 'package:twitter_clone/features/auth/view/login_screen.dart';
-
 import 'package:twitter_clone/features/auth/view/signup_screen.dart';
 import 'package:twitter_clone/features/home/view/home_screen.dart';
 import 'package:twitter_clone/theme/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AppwriteConstant().getConfigs();
   // For self signed certificates, only use for development
   runApp(const ProviderScope(child: MyApp()));
 }

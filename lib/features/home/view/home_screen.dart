@@ -44,6 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           size: 28,
         ),
       ),
+      drawerScrimColor: Colors.transparent,
       drawer: SideDrawer(),
       bottomNavigationBar: CupertinoTabBar(
         backgroundColor: Pallete.backgroundColor,

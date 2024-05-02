@@ -60,7 +60,7 @@ class UserAPI implements IUserAPI {
         databaseId: AppwriteConstant.databaseId,
         collectionId: AppwriteConstant.userCollection,
         queries: [
-          Query.search('name', name),
+          //Query.search('name', name),
         ]);
     return documents.documents;
   }
