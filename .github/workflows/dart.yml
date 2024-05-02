@@ -20,16 +20,16 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '12'
+          java-version: '21'
 
       - name: Create .env File
         run: |
-          echo "endpoint=\"http://127.0.0.1:8080/v1\"" > .env
-          echo "projectId='65de1d6f4e9108353385'" >> .env
-          echo "databaseId='65de26edd12df0816f0a'" >> .env
-          echo "userCollection='65df8b05d8fc420453c3'" >> .env
-          echo "tweetCollection=\"6609b25bbaa0bc7e444f\"" >> .env
-          echo "notificationCollections=\"66334b25bbd2dd547bdd\"" >> .env
+          echo "endpoint=$ENDPOINT" > .env
+          echo "projectId=${{secrets.PROJECTID}}" >> .env
+          echo "databaseId=${{secrets.DATABASEID}}" >> .env
+          echo "userCollection=${{secrets.USERCOLLECTION}}" >> .env
+          echo "tweetCollection=${{secrets.TWEETCOLLECTION}}" >> .env
+          echo "notificationCollections=${{secrets.NOTIFICATIONCOLLECTIONS}}" >> .env
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -53,22 +53,6 @@ jobs:
           ln -s ../Runner.app
           cd ..
           zip -r app.ipa Payload
-      
-        #upload apk to artifacts with the name weather_app.apk with each iteration inceament the version code
-      - name: Push to Releases
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
-          tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.GIT_TOKEN }}
-          body: |
-            - Build ${{ github.run_number }}
-            - Commit ${{ github.sha }}
-            - Branch ${{ github.ref }}
-            - Author ${{ github.actor }}```
-          name: v1.0.${{ github.run_number }}
-          prerelease: false
-          draft: false
 
 
 
