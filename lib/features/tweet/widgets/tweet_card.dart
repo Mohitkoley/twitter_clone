@@ -6,7 +6,7 @@ import 'package:like_button/like_button.dart';
 import 'package:twitter_clone/common/error_screen.dart';
 import 'package:twitter_clone/common/loading_screen.dart';
 import 'package:twitter_clone/constants/assets_constants.dart';
-import 'package:twitter_clone/core/enums.dart/tweet_type.dart';
+import 'package:twitter_clone/core/enums/tweet_type.dart';
 import 'package:twitter_clone/core/extension.dart';
 import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
 import 'package:twitter_clone/features/tweet/controllers/tweet_controller.dart';
@@ -14,6 +14,7 @@ import 'package:twitter_clone/features/tweet/view/twitter_reply_screen.dart';
 import 'package:twitter_clone/features/tweet/widgets/carousel_image.dart';
 import 'package:twitter_clone/features/tweet/widgets/hashtag_text.dart';
 import 'package:twitter_clone/features/tweet/widgets/tweet_icon_widget.dart';
+import 'package:twitter_clone/features/user_profile/view/user_profile_view.dart';
 import 'package:twitter_clone/model/tweet_model.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -40,9 +41,15 @@ class TweetCard extends ConsumerWidget {
                       children: [
                         Container(
                           margin: const EdgeInsets.all(10),
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(user.profilePic),
-                            radius: 35,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context, UserProfileView.route(user));
+                            },
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(user.profilePic),
+                              radius: 35,
+                            ),
                           ),
                         ),
                         Expanded(
@@ -72,7 +79,9 @@ class TweetCard extends ConsumerWidget {
                               Row(
                                 children: [
                                   Container(
-                                    margin: const EdgeInsets.only(right: 5),
+                                    margin: EdgeInsets.only(
+                                        right:
+                                            currentUser.isTwitterBlue ? 1 : 5),
                                     child: Text(
                                       user.name,
                                       style: const TextStyle(
@@ -80,6 +89,17 @@ class TweetCard extends ConsumerWidget {
                                           fontSize: 20),
                                     ),
                                   ),
+                                  if (currentUser.isTwitterBlue)
+                                    Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5),
+                                        child: SvgPicture.asset(
+                                            AssetsConstants.verifiedIcon,
+                                            width: 20,
+                                            height: 20,
+                                            colorFilter: const ColorFilter.mode(
+                                                Pallete.blueColor,
+                                                BlendMode.srcIn))),
                                   Text(
                                       '@${user.name} . ${timeago.format(tweet.tweetedAt, locale: 'en_short')}',
                                       style: const TextStyle(

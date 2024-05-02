@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:twitter_clone/core/enums.dart/tweet_type.dart';
+import 'package:twitter_clone/core/enums/tweet_type.dart';
 import 'package:twitter_clone/core/extension.dart';
 
 @immutable
@@ -105,7 +105,7 @@ class Tweet {
       link: map['link'] as String,
       imageLinks: List<String>.from(map['imageLinks']),
       uid: map['uid'] as String,
-      tweetType: (map['tweetType'] as String).toEnum(),
+      tweetType: (map['tweetType'] as String).toTweetEnum(),
       tweetedAt: DateTime.fromMillisecondsSinceEpoch(map['tweetedAt'] as int),
       likes: List<String>.from(map['likes']),
       commentIds: List<String>.from(map['commentIds']),

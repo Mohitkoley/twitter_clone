@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twitter_clone/core/enums.dart/tweet_type.dart';
+import 'package:twitter_clone/core/enums/notification_type_enum.dart';
+import 'package:twitter_clone/core/enums/tweet_type.dart';
 
 extension ContextExt on BuildContext {
   double get height => MediaQuery.sizeOf(this).height;
@@ -21,7 +22,7 @@ extension NumExt on num {
 }
 
 extension TweetTypeX on String {
-  TweetType toEnum() {
+  TweetType toTweetEnum() {
     switch (this) {
       case 'text':
         return TweetType.text;
@@ -29,6 +30,21 @@ extension TweetTypeX on String {
         return TweetType.image;
       default:
         return TweetType.text;
+    }
+  }
+
+  NotificationType toNotificationEnum() {
+    switch (this) {
+      case 'like':
+        return NotificationType.like;
+      case 'reply':
+        return NotificationType.reply;
+      case 'follow':
+        return NotificationType.follow;
+      case 'retweet':
+        return NotificationType.reTweet;
+      default:
+        return NotificationType.like;
     }
   }
 }

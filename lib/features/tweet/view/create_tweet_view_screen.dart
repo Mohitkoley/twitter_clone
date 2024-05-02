@@ -8,7 +8,7 @@ import 'package:twitter_clone/common/common.dart';
 import 'package:twitter_clone/constants/assets_constants.dart';
 import 'package:twitter_clone/core/extension.dart';
 import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
-import 'package:twitter_clone/features/tweet/controllers/image_picker_controller.dart';
+import 'package:twitter_clone/common/controllers/image_picker_controller.dart';
 import 'package:twitter_clone/features/tweet/controllers/tweet_controller.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 
@@ -44,9 +44,12 @@ class _CreateTweetViewScreenState extends ConsumerState<CreateTweetViewScreen> {
 
   void shareTweet() {
     final description = descriptionController.text;
-    ref
-        .read(tweetControllerProvider.notifier)
-        .shareTweet(images, description, "", "", context);
+    ref.read(tweetControllerProvider.notifier).shareTweet(
+        images: images,
+        description: description,
+        repliedTo: "",
+        repliedToUserId: "",
+        context: context);
     Navigator.of(context).pop();
   }
 

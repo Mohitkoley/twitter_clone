@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/constants/constants.dart';
 import 'package:twitter_clone/features/home/controllers/home_ui_controller.dart';
+import 'package:twitter_clone/features/home/widgets/side_drawer.dart';
 import 'package:twitter_clone/features/tweet/view/create_tweet_view_screen.dart';
 import 'package:twitter_clone/routes/transition/custom_transition.dart';
 import 'package:twitter_clone/theme/pallete.dart';
@@ -43,6 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           size: 28,
         ),
       ),
+      drawer: SideDrawer(),
       bottomNavigationBar: CupertinoTabBar(
         backgroundColor: Pallete.backgroundColor,
         currentIndex: bottomBarIndex,

@@ -12,16 +12,23 @@ abstract class IUserAPI {
   Future<Document> getUserData(String userId);
   Future<List<Document>> searchUserByName(String name);
   FutureEitherVoid updateUserData(UserModel userModel);
+  Stream<RealtimeMessage> getLatestUserProfileData();
+  FutureEitherVoid followUser(UserModel userModel);
+  FutureEitherVoid addToFollowing(UserModel userModel);
 }
 
 final userAPIProvider = Provider<UserAPI>((ref) {
   final databases = ref.watch(appwriteDatabasesProvider);
-  return UserAPI(databases: databases);
+  final realtime = ref.watch(appwriteRealtimeProvider);
+  return UserAPI(databases: databases, realtime: realtime);
 });
 
 class UserAPI implements IUserAPI {
   final Databases _db;
-  UserAPI({required Databases databases}) : _db = databases;
+  final Realtime _realtime;
+  UserAPI({required Databases databases, required Realtime realtime})
+      : _db = databases,
+        _realtime = realtime;
 
   @override
   FutureEitherVoid saveUserData(UserModel userModel) async {
@@ -66,6 +73,49 @@ class UserAPI implements IUserAPI {
           collectionId: AppwriteConstant.userCollection,
           documentId: userModel.uid,
           data: userModel.toMap());
+      return right(null);
+    } on AppwriteException catch (e, stk) {
+      return left(Failure(e.message ?? "some UnExpected Error occured", stk));
+    } catch (e, stk) {
+      return left(Failure(e.toString(), stk));
+    }
+  }
+
+  @override
+  Stream<RealtimeMessage> getLatestUserProfileData() {
+    return _realtime.subscribe([
+      'databases.${AppwriteConstant.databaseId}.collections.${AppwriteConstant.userCollection}.documents'
+    ]).stream;
+  }
+
+  @override
+  FutureEitherVoid followUser(UserModel userModel) async {
+    try {
+      await _db.updateDocument(
+          databaseId: AppwriteConstant.databaseId,
+          collectionId: AppwriteConstant.userCollection,
+          documentId: userModel.uid,
+          data: {
+            'followers': userModel.followers,
+          });
+      return right(null);
+    } on AppwriteException catch (e, stk) {
+      return left(Failure(e.message ?? "some UnExpected Error occured", stk));
+    } catch (e, stk) {
+      return left(Failure(e.toString(), stk));
+    }
+  }
+
+  @override
+  FutureEitherVoid addToFollowing(UserModel userModel) async {
+    try {
+      await _db.updateDocument(
+          databaseId: AppwriteConstant.databaseId,
+          collectionId: AppwriteConstant.userCollection,
+          documentId: userModel.uid,
+          data: {
+            'following': userModel.following,
+          });
       return right(null);
     } on AppwriteException catch (e, stk) {
       return left(Failure(e.message ?? "some UnExpected Error occured", stk));

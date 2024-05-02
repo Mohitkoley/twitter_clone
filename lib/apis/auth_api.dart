@@ -22,6 +22,8 @@ abstract class IAuthAPI {
   });
 
   Future<User?> getCurrentUser();
+
+  FutureEitherVoid logOut();
 }
 
 class AuthAPI implements IAuthAPI {
@@ -62,6 +64,19 @@ class AuthAPI implements IAuthAPI {
       Session user = await _account.createEmailPasswordSession(
           email: email, password: password);
       return right(user);
+    } on AppwriteException catch (e, stackTrace) {
+      return left(
+          Failure(e.message ?? "some UnExpected Error occured", stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
+  }
+
+  @override
+  FutureEitherVoid logOut() async {
+    try {
+      await _account.deleteSession(sessionId: 'current');
+      return right(null);
     } on AppwriteException catch (e, stackTrace) {
       return left(
           Failure(e.message ?? "some UnExpected Error occured", stackTrace));

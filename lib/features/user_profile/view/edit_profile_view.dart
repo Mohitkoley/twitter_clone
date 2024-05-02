@@ -6,7 +6,7 @@ import 'package:package_rename/package_rename.dart';
 import 'package:twitter_clone/common/loading_screen.dart';
 import 'package:twitter_clone/core/extension.dart';
 import 'package:twitter_clone/features/auth/controllers/auth_controller.dart';
-import 'package:twitter_clone/features/tweet/controllers/image_picker_controller.dart';
+import 'package:twitter_clone/common/controllers/image_picker_controller.dart';
 import 'package:twitter_clone/features/user_profile/controllers/user_profile_controller.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 
